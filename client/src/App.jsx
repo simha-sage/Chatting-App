@@ -1,56 +1,25 @@
-// client/src/App.js
-import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
 
-const socket = io("http://localhost:3000"); // connect to backend
+import { Routes, Route } from "react-router-dom";
+import UserAuthToggle from "./components/userAuthToggle";
+import { AppProvider } from "./context/conext1";
+import Home from "./components/Home";
+import ChatPage from "./components/ChatPage";
 
-const App = () => {
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState([]);
-
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected to server:", socket.id);
-    });
-
-    socket.on("chat message", (msg) => {
-      setMessages((prev) => [...prev, msg]);
-    });
-
-    return () => {
-      socket.off("chat message");
-      socket.off("connect");
-    };
-  }, []);
-
-  const sendMessage = (e) => {
-    e.preventDefault();
-    if (message.trim() !== "") {
-      socket.emit("chat message", message);
-      setMessage("");
-    }
-  };
+function App() {
+  const [count, setCount] = useState(0);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Chat App</h1>
-      <ul>
-        {messages.map((msg, i) => (
-          <li key={i}>{msg}</li>
-        ))}
-      </ul>
-
-      <form onSubmit={sendMessage}>
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type a message..."
-        />
-        <button type="submit">Send</button>
-      </form>
-    </div>
+    <AppProvider>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/chatPage" element={<ChatPage />} />
+        <Route path="/authentication" element={<UserAuthToggle />} />
+      </Routes>
+    </AppProvider>
   );
-};
+}
 
 export default App;

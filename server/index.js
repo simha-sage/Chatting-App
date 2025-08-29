@@ -19,15 +19,15 @@ const io = new Server(server, {
 const users = {};
 
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
+  console.log("⚡ New user connected:", socket.id);
 
-  socket.on("chat message", (msg) => {
-    console.log("Message received:", msg);
-    io.emit("chat message", msg); // send to everyone
+  socket.on("sendMessage", (msg) => {
+    // broadcast message to everyone
+    io.emit("receiveMessage", msg);
   });
 
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    console.log("❌ User disconnected:", socket.id);
   });
 });
 
