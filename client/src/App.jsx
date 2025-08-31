@@ -9,8 +9,6 @@ import Home from "./components/Home";
 import ChatPage from "./components/ChatPage";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <AppProvider>
       <Routes>

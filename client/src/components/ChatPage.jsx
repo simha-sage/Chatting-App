@@ -1,12 +1,19 @@
 import { use, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useApp } from "../context/conext1";
+import { useLocation } from "react-router-dom";
 
-const socket = io("http://localhost:3000");
+const socket = io("http://localhost:5000");
 const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
   const { user } = useApp();
+
+  const { search } = useLocation();
+  const queryParams = new URLSearchParams(search);
+
+  const friendId = queryParams.get("friendId");
+  const name = queryParams.get("name");
 
   useEffect(() => {
     socket.on("receiveMessage", (msg) => {
@@ -31,8 +38,8 @@ const ChatPage = () => {
       <div className="flex gap-4 p-4 bg-gray-200 items-center">
         <div className="bg-amber-500 w-12 h-12 border rounded-full"></div>
         <div>
-          <p className="font-bold">Name</p>
-          <p className="text-sm text-gray-500">status</p>
+          <p className="font-bold">{name}</p>
+          <p className="text-sm text-gray-500">{friendId}</p>
         </div>
       </div>
 
