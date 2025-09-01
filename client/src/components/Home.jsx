@@ -26,7 +26,7 @@ const SuggestionCard = ({ data }) => {
     useApp();
   async function addFriend(data) {
     try {
-      const res = await fetch("http://localhost:5000/addFriend", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/addFriend`, {
         method: "POST",
         credentials: "include", // 🔑 send cookies
         headers: {
@@ -83,7 +83,7 @@ const User = () => {
   const [dropDown, setDropDown] = useState(false);
   const logOut = async () => {
     setUser("");
-    await fetch("http://localhost:5000/logout", {
+    await fetch(`${process.env.REACT_APP_API_URL}/logout`, {
       method: "POST",
       credentials: "include",
     });

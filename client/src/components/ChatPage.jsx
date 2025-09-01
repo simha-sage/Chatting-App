@@ -18,7 +18,7 @@ const ChatPage = () => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:5000", {
+    socketRef.current = io(`${process.env.REACT_APP_API_URL}`, {
       withCredentials: true,
     });
 
@@ -39,7 +39,7 @@ const ChatPage = () => {
     try {
       const previousData = async () => {
         const res = await fetch(
-          `http://localhost:5000/chat/getPreviousChat?userId=${userId}&friendId=${friendId}`,
+          `${process.env.REACT_APP_API_URL}/chat/getPreviousChat?userId=${userId}&friendId=${friendId}`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -58,7 +58,7 @@ const ChatPage = () => {
     if (chatMessages.length === 0) return;
 
     try {
-      await fetch("http://localhost:5000/chat/updatePreviousChat", {
+      await fetch(`${process.env.REACT_APP_API_URL}/chat/updatePreviousChat`, {
         // Use your full backend URL
         method: "POST",
         headers: { "Content-Type": "application/json" },

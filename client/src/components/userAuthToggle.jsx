@@ -7,12 +7,15 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const { setUser, setUserId } = useApp();
   const handleSignIn = async (e) => {
-    const response = await fetch("http://localhost:5000/userSignIn", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/userSignIn`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      }
+    );
     const data = await response.json();
     if (data.message == "Login successful") {
       setUser(data.userName);
@@ -66,11 +69,14 @@ const SignUp = ({ setIsSignIn }) => {
   const [password, setPassword] = useState("");
   const [userName, setUserName] = useState("");
   const handleSignUp = async (e) => {
-    const response = await fetch("http://localhost:5000/userSignUp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, userName }),
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/userSignUp`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, userName }),
+      }
+    );
     const data = await response.json();
     if (data.message === "User added sucessfully") {
       setIsSignIn(true);

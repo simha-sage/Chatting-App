@@ -8,7 +8,7 @@ export const AppProvider = ({ children }) => {
   const [friends, setFriends] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
-    fetch("http://localhost:5000/protectedRoute", {
+    fetch(`${process.env.REACT_APP_API_URL}/protectedRoute`, {
       method: "GET",
       credentials: "include",
     })
@@ -30,7 +30,7 @@ export const AppProvider = ({ children }) => {
     if (user !== "") {
       async function fetchFriends() {
         try {
-          const res = await fetch("http://localhost:5000/friends", {
+          const res = await fetch(`${process.env.REACT_APP_API_URL}/friends`, {
             method: "GET",
             credentials: "include", // 🔑 send cookies
           });
@@ -48,10 +48,13 @@ export const AppProvider = ({ children }) => {
   }, [user]);
   useEffect(() => {
     const getSuggestions = async function () {
-      const response = await fetch("http://localhost:5000/friendSuggestions", {
-        method: "GET",
-        credentials: "include", // 🔑 send cookies
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/friendSuggestions`,
+        {
+          method: "GET",
+          credentials: "include", // 🔑 send cookies
+        }
+      );
       const data = await response.json();
       setFriendSuggestions(data);
       console.log(data);
