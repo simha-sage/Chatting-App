@@ -17,11 +17,19 @@ export const AppProvider = ({ children }) => {
         });
 
         if (!response.ok) {
+          // handle unauthorized or missing token
+          if (response.status === 401) {
+            console.warn("No valid session, redirecting...");
+            navigate("/authentication");
+            return;
+          }
+
           throw new Error(
             `Authentication failed with status: ${response.status}`
           );
         }
 
+        // ✅ only parse JSON when ok
         const data = await response.json();
         setUser(data.user);
         setUserId(data.userId);
@@ -34,6 +42,7 @@ export const AppProvider = ({ children }) => {
 
     checkUserSession();
   }, []);
+
   useEffect(() => {
     user == "" ? navigate("/authentication") : navigate("/");
     if (user !== "") {

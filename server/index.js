@@ -80,8 +80,8 @@ app.post("/userSignIn", async (req, res) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: false, // must be false on localhost
-    sameSite: "lax", // or "none" + secure:true if cross-origin POST
+    secure: true, // must be false on localhost
+    sameSite: "none", // or "none" + secure:true if cross-origin POST
     maxAge: 3600000,
   });
   res.json({
