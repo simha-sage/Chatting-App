@@ -31,7 +31,7 @@ router.post("/updatePreviousChat", async (req, res) => {
 
 router.get("/getPreviousChat", async (req, res) => {
   try {
-    const { userId, friendId } = req.query.params;
+    const { userId, friendId } = req.query;
     const index = [userId, friendId].sort().join("_");
     const record = await Record.findOne({ index });
     res.json(record ? record.messages : []);
