@@ -15,7 +15,7 @@ dotenv.config();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // React frontend
+    origin: "https://chatting-app-client-8bru.onrender.com", // React frontend
     methods: ["GET", "POST"],
     credentials: true, // ✅ allow cookies
   })
@@ -170,7 +170,7 @@ app.get("/friends", authMiddleware, async (req, res) => {
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "https://chatting-app-client-8bru.onrender.com",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -217,7 +217,8 @@ io.on("connection", (socket) => {
 //routes from /routes
 import previousChat from "./routes/previousChat.js";
 app.use("/chat", previousChat);
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
+
 server.listen(PORT, () => {
-  console.log(`server running at http://localhost:${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
