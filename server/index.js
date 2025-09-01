@@ -214,6 +214,15 @@ io.on("connection", (socket) => {
   });
 });
 
+// Health check route
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "Server is healthy 🚀",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 //routes from /routes
 import previousChat from "./routes/previousChat.js";
 app.use("/chat", previousChat);
