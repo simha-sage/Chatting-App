@@ -7,25 +7,29 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const { setUser, setUserId } = useApp();
   const handleSignIn = async (e) => {
-    const response = await fetch(
-      `${process.env.REACT_APP_API_URL}/userSignIn`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        credentials: "include",
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/userSignIn`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+      if (data.message == "Login successful") {
+        setUser(data.userName);
+        setUserId(data.userId);
+        console.log(data.userId, "aaple");
+        setEmail("");
+        setPassword("");
+        navigate("/");
+      } else {
+        window.alert("Login Unsucessful");
       }
-    );
-    const data = await response.json();
-    if (data.message == "Login successful") {
-      setUser(data.userName);
-      setUserId(data.userId);
-      console.log(data.userId, "aaple");
-      setEmail("");
-      setPassword("");
-      navigate("/");
-    } else {
-      window.alert("Login Unsucessful");
+    } catch (err) {
+      console.log(err);
     }
   };
 
