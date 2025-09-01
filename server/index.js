@@ -88,8 +88,8 @@ app.post("/userSignIn", async (req, res) => {
   });
 });
 const authMiddleware = (req, res, next) => {
-  // must show { token: "<jwt>" }
   const token = req.cookies.token;
+
   if (token) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
@@ -99,6 +99,9 @@ const authMiddleware = (req, res, next) => {
     } catch (err) {
       res.status(401).json({ message: "Invalid token" });
     }
+  } else {
+    // Add this block to handle missing tokens
+    res.status(401).json({ message: "Access denied. No token provided." });
   }
 };
 

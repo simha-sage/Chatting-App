@@ -8,22 +8,33 @@ export const AppProvider = ({ children }) => {
   const [friends, setFriends] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/protectedRoute`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => {
-        if (res.status === 401) throw new Error("invalid token");
-        return res.json();
-      })
-      .then((data) => {
+    const checkUserSession = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/protectedRoute`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            `Authentication failed with status: ${response.status}`
+          );
+        }
+
+        const data = await response.json();
         setUser(data.user);
         setUserId(data.userId);
         navigate("/"); // restore user from cookie
-      })
-      .catch(() => {
-        navigate("/authentication"); // optional
-      });
+      } catch (error) {
+        console.error("Session check failed:", error);
+        navigate("/authentication");
+      }
+    };
+
+    checkUserSession();
   }, []);
   useEffect(() => {
     user == "" ? navigate("/authentication") : navigate("/");
