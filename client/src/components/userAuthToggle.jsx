@@ -5,7 +5,7 @@ const SignIn = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setUser } = useApp();
+  const { setUser, setUserId } = useApp();
   const handleSignIn = async (e) => {
     const response = await fetch("http://localhost:5000/userSignIn", {
       method: "POST",
@@ -16,6 +16,8 @@ const SignIn = () => {
     const data = await response.json();
     if (data.message == "Login successful") {
       setUser(data.userName);
+      setUserId(data.userId);
+      console.log(data.userId, "aaple");
       setEmail("");
       setPassword("");
       navigate("/");
@@ -77,8 +79,6 @@ const SignUp = ({ setIsSignIn }) => {
 
     setEmail("");
     setPassword("");
-
-    window.alert(data.message);
   };
   return (
     <div className="bg-amber-700 h-4/12 w-4/12 flex justify-center items-center">

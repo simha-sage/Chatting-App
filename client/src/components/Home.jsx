@@ -15,7 +15,7 @@ const FriendCard = ({ onClick, data }) => {
       </div>
       <div className="ml-4 flex-1">
         <p>{data.name}</p>
-        <p>{data.email}</p>
+        <p>{data._id}</p>
       </div>
     </div>
   );
@@ -24,6 +24,29 @@ const FriendCard = ({ onClick, data }) => {
 const SuggestionCard = ({ data }) => {
   const { friends, setFriends, setFriendSuggestions, friendSuggestions } =
     useApp();
+  async function addFriend(data) {
+    try {
+      const res = await fetch("http://localhost:5000/addFriend", {
+        method: "POST",
+        credentials: "include", // 🔑 send cookies
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          _id: data._id,
+          name: data.name,
+          email: data.email,
+        }),
+      });
+
+      const response = await res.json();
+      console.log("Add Friend Response:", data);
+      return response;
+    } catch (err) {
+      console.error("Error adding friend:", err);
+    }
+  }
+
   return (
     <div className="border p-4 m-4 rounded-lg shadow-lg flex w-6/12 justify-between items-center">
       <div className="border rounded-4xl h-13 w-13 bg-amber-500 flex justify-center items-center">
@@ -38,11 +61,16 @@ const SuggestionCard = ({ data }) => {
           className="px-4 py-2 bg-amber-400 rounded"
           type="button"
           value="ADD"
-          onClick={() => {
-            setFriends([data, ...friends]);
-            setFriendSuggestions(
-              friendSuggestions.filter((i) => i._id !== data._id)
-            );
+          onClick={async () => {
+            const response = await addFriend(data);
+            if (response?.success) {
+              setFriends([data, ...friends]);
+              setFriendSuggestions(
+                friendSuggestions.filter((i) => i._id !== data._id)
+              );
+            } else {
+              console.error("Failed to add friend:", response);
+            }
           }}
         />
       </div>
@@ -77,7 +105,6 @@ const User = () => {
   );
 };
 const Home = () => {
-  const navigate = useNavigate();
   const { friendSuggestions, friends } = useApp();
 
   return (
@@ -90,7 +117,7 @@ const Home = () => {
 
       <div className="flex flex-col items-center">
         <p>Friends</p>
-        {friends.map(function (item) {
+        {friends.map((item) => {
           return <FriendCard key={item._id} data={item} />;
         })}
         <p>Suggestion</p>

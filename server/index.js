@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { type } from "node:os";
 
 const app = express();
 app.use(cookieParser());
@@ -31,11 +32,10 @@ try {
 
 //user schema
 const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, maxlength: 100, unique: true },
+  email: { type: String, required: true, maxlength: 100 },
   password: { type: String, required: true, maxlength: 100, minlength: 6 },
   name: { type: String },
-  timeStamp: { type: Date, required: true, default: Date.now },
-  friends: { type: Array, default: [] },
+  friends: { type: [{ id: String, name: String }], default: [], unique: true },
 });
 const User = mongoose.model("users", userSchema);
 // api routes
@@ -46,7 +46,7 @@ app.post("/userSignUp", async (req, res) => {
       email,
       password,
       name: userName,
-      timeStamp: new Date(),
+      friends: [],
     });
     await newUser.save();
     res.send({ message: "User added sucessfully" });
@@ -81,8 +81,11 @@ app.post("/userSignIn", async (req, res) => {
     sameSite: "lax", // or "none" + secure:true if cross-origin POST
     maxAge: 3600000,
   });
-  console.log("Login successful, token set in cookie");
-  res.json({ message: "Login successful", userName: user.name });
+  res.json({
+    message: "Login successful",
+    userName: user.name,
+    userId: user._id,
+  });
 });
 const authMiddleware = (req, res, next) => {
   // must show { token: "<jwt>" }
@@ -92,7 +95,6 @@ const authMiddleware = (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
       req.userId = decoded.id;
       req.user = decoded.user;
-      console.log("Authenticated user:", req.user);
       next();
     } catch (err) {
       res.status(401).json({ message: "Invalid token" });
@@ -103,7 +105,7 @@ const authMiddleware = (req, res, next) => {
 app.get("/protectedRoute", authMiddleware, (req, res) => {
   res.json({
     message: "You are logged in!",
-    userId: req.id,
+    userId: req.userId,
     user: req.user,
   });
 });
@@ -120,37 +122,101 @@ app.post("/logout", (req, res) => {
 
 //get friend suggestions
 app.get("/friendSuggestions", authMiddleware, async (req, res) => {
-  const suggestions = await User.find(
-    { _id: { $ne: req.user.id } }, // exclude logged in user
-    "name email" // include only these fields (projection
-  )
+  const userFriends = await User.findById(req.userId).select("friends");
+  const friendsIds = userFriends.friends.map((friend) => friend._id);
+  const suggestions = await User.find({
+    _id: { $nin: [...friendsIds, req.userId] }, // exclude logged in user
+    // include only these fields (projection)
+  })
     .sort({ createdAt: -1 })
     .limit(20);
 
   res.json(suggestions);
 });
+//add friend
+app.post("/addFriend", authMiddleware, async (req, res) => {
+  try {
+    const { _id, name, email } = req.body;
+    const userId = req.userId; // from JWT middleware
+
+    await User.findByIdAndUpdate(userId, {
+      $addToSet: {
+        friends: { _id: _id, name: name, email: email },
+      },
+    });
+
+    res.json({ success: true, message: "Friend added!" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+//get friends list
+app.get("/friends", authMiddleware, async (req, res) => {
+  const userId = req.userId;
+  try {
+    const user = await User.findById(userId);
+    res.json(user.friends);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 //socket io connection
+// server.js
+
+// ... (keep all your other code like express, mongoose, etc.)
+
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // React app
+    origin: "http://localhost:5173",
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
-io.on("connection", (socket) => {
-  console.log("⚡ New user connected:", socket.id);
 
-  socket.on("sendMessage", (msg) => {
-    // broadcast message to everyone
-    io.emit("receiveMessage", msg);
+// To send a message to a specific user, we need to know their socket.id.
+// This is a simple way to map a user ID to a socket ID.
+const users = {};
+
+io.on("connection", (socket) => {
+  console.log(`A user connected with ID: ${socket.id}`);
+
+  // When a user logs in, they should emit their userId to the server
+  socket.on("register", (userId) => {
+    users[userId] = socket.id;
+    console.log("Registered users:", users);
+  });
+
+  // Listen for a private message
+  socket.on("private_message", ({ recipientId, message }) => {
+    // Look up the recipient's socket.id
+    const recipientSocketId = users[recipientId];
+
+    if (recipientSocketId) {
+      // Send the message only to that specific user
+      io.to(recipientSocketId).emit("private_message", {
+        senderId: socket.id, // Or the sender's userId
+        message: message,
+      });
+    }
   });
 
   socket.on("disconnect", () => {
-    console.log("❌ User disconnected:", socket.id);
+    // Clean up the users object on disconnect
+    for (let userId in users) {
+      if (users[userId] === socket.id) {
+        delete users[userId];
+      }
+    }
+    console.log("A user disconnected. Registered users:", users);
   });
 });
 
+//routes from /routes
+import previousChat from "./routes/previousChat.js";
+app.use("/chat", previousChat);
 const PORT = 5000;
 server.listen(PORT, () => {
   console.log(`server running at http://localhost:${PORT}`);
