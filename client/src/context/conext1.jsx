@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+const apiUrl = import.meta.env.VITE_API_URL;
 const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [user, setUser] = useState("");
@@ -10,13 +11,10 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     const checkUserSession = async () => {
       try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/protectedRoute`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
+        const response = await fetch(`${apiUrl}/protectedRoute`, {
+          method: "GET",
+          credentials: "include",
+        });
 
         if (!response.ok) {
           throw new Error(
@@ -41,7 +39,7 @@ export const AppProvider = ({ children }) => {
     if (user !== "") {
       async function fetchFriends() {
         try {
-          const res = await fetch(`${process.env.REACT_APP_API_URL}/friends`, {
+          const res = await fetch(`${apiUrl}/friends`, {
             method: "GET",
             credentials: "include", // 🔑 send cookies
           });
@@ -59,13 +57,10 @@ export const AppProvider = ({ children }) => {
   }, [user]);
   useEffect(() => {
     const getSuggestions = async function () {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/friendSuggestions`,
-        {
-          method: "GET",
-          credentials: "include", // 🔑 send cookies
-        }
-      );
+      const response = await fetch(`${apiUrl}/friendSuggestions`, {
+        method: "GET",
+        credentials: "include", // 🔑 send cookies
+      });
       const data = await response.json();
       setFriendSuggestions(data);
       console.log(data);

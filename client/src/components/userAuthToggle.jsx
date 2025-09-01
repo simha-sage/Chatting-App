@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useApp } from "../context/conext1";
 import { useNavigate } from "react-router-dom";
+const apiUrl = import.meta.env.VITE_API_URL;
 const SignIn = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -8,15 +9,16 @@ const SignIn = () => {
   const { setUser, setUserId } = useApp();
   const handleSignIn = async (e) => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/userSignIn`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${apiUrl}/userSignIn`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      });
+      fetch(`${apiUrl}/health`, { credentials: "include" })
+        .then((res) => res.json())
+        .then(console.log);
+
       const data = await response.json();
       if (data.message == "Login successful") {
         setUser(data.userName);
@@ -73,14 +75,11 @@ const SignUp = ({ setIsSignIn }) => {
   const [password, setPassword] = useState("");
   const [userName, setUserName] = useState("");
   const handleSignUp = async (e) => {
-    const response = await fetch(
-      `${process.env.REACT_APP_API_URL}/userSignUp`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, userName }),
-      }
-    );
+    const response = await fetch(`${apiUrl}/userSignUp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, userName }),
+    });
     const data = await response.json();
     if (data.message === "User added sucessfully") {
       setIsSignIn(true);

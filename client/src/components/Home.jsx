@@ -1,6 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/conext1";
 import { useState, useEffect, use } from "react";
+
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const FriendCard = ({ onClick, data }) => {
   const navigate = useNavigate();
   return (
@@ -26,7 +29,7 @@ const SuggestionCard = ({ data }) => {
     useApp();
   async function addFriend(data) {
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/addFriend`, {
+      const res = await fetch(`${apiUrl}/addFriend`, {
         method: "POST",
         credentials: "include", // 🔑 send cookies
         headers: {
@@ -83,7 +86,7 @@ const User = () => {
   const [dropDown, setDropDown] = useState(false);
   const logOut = async () => {
     setUser("");
-    await fetch(`${process.env.REACT_APP_API_URL}/logout`, {
+    await fetch(`${apiUrl}/logout`, {
       method: "POST",
       credentials: "include",
     });

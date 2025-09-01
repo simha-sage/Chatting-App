@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
 import { useApp } from "../context/conext1";
 import { useLocation } from "react-router-dom";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const ChatPage = () => {
   const [messages, setMessages] = useState([]);
@@ -18,7 +19,7 @@ const ChatPage = () => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    socketRef.current = io(`${process.env.REACT_APP_API_URL}`, {
+    socketRef.current = io(`${apiUrl}`, {
       withCredentials: true,
     });
 
@@ -39,7 +40,7 @@ const ChatPage = () => {
     try {
       const previousData = async () => {
         const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/chat/getPreviousChat?userId=${userId}&friendId=${friendId}`,
+          `${apiUrl}/chat/getPreviousChat?userId=${userId}&friendId=${friendId}`,
           {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -58,7 +59,7 @@ const ChatPage = () => {
     if (chatMessages.length === 0) return;
 
     try {
-      await fetch(`${process.env.REACT_APP_API_URL}/chat/updatePreviousChat`, {
+      await fetch(`${apiUrl}/chat/updatePreviousChat`, {
         // Use your full backend URL
         method: "POST",
         headers: { "Content-Type": "application/json" },

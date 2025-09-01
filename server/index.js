@@ -15,9 +15,12 @@ dotenv.config();
 
 app.use(
   cors({
-    origin: "https://chatting-app-client-8bru.onrender.com", // React frontend
-    methods: ["GET", "POST"],
-    credentials: true, // ✅ allow cookies
+    origin: [
+      "http://localhost:5173", // Vite default dev URL
+      "https://chatting-app-client-8bru.onrender.com",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
   })
 );
 
