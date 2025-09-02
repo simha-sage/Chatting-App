@@ -76,8 +76,6 @@ const ChatPage = () => {
   };
 
   useEffect(() => {
-    // This return function is the "cleanup" function.
-    // It runs when the component is about to unmount (e.g., user navigates away).
     saveChatHistory(messages);
   }, [messages, userId, friendId]);
 
