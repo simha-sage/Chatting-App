@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { useApp } from "../context/conext1";
+import { useApp } from "../context/context1";
 import { useNavigate } from "react-router-dom";
 const apiUrl = import.meta.env.VITE_API_URL;
 const SignIn = () => {
@@ -36,7 +36,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="bg-amber-400 h-4/12 w-4/12 flex justify-center items-center">
+    <div className="bg-[#61944a] h-4/12 w-60 md:w-4/12 flex justify-center items-center">
       <form
         className="flex flex-col items-center"
         id="signIn"
@@ -52,6 +52,7 @@ const SignIn = () => {
           value={email}
           required
           onChange={(e) => setEmail(e.target.value)}
+          className="border-2 border-grey-500 rounded p-1 px-1 my-1 text-black"
         />
         <input
           type="password"
@@ -60,9 +61,10 @@ const SignIn = () => {
           minLength="6"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="border-2 border-grey-500 rounded p-1 px-1 my-1 text-black"
         />
         <input
-          className="bg-green-800 p-1 rounded-md font-black"
+          className="bg-[#446834] p-1 m-1 rounded-md font-bold text-black"
           type="submit"
         />
       </form>
@@ -90,7 +92,7 @@ const SignUp = ({ setIsSignIn }) => {
     setPassword("");
   };
   return (
-    <div className="bg-amber-700 h-4/12 w-4/12 flex justify-center items-center">
+    <div className="bg-[#446834] h-4/12 w-60 md:w-4/12 flex justify-center items-center">
       <form
         className="flex flex-col items-center"
         id="signUp"
@@ -107,6 +109,7 @@ const SignUp = ({ setIsSignIn }) => {
           required
           maxLength={30}
           onChange={(e) => setEmail(e.target.value)}
+          className="border-2 border-grey-500 rounded p-1 px-1 my-1 text-black "
         />
         <input
           type="text"
@@ -115,6 +118,7 @@ const SignUp = ({ setIsSignIn }) => {
           required
           maxLength={30}
           onChange={(e) => setUserName(e.target.value)}
+          className="border-2 border-grey-500 rounded p-1 px-1 my-1 text-black "
         />
         <input
           type="password"
@@ -124,9 +128,10 @@ const SignUp = ({ setIsSignIn }) => {
           minLength={6}
           maxLength={30}
           onChange={(e) => setPassword(e.target.value)}
+          className="border-2 border-grey-500 rounded p-1 px-1 my-1 text-black"
         />
         <input
-          className="bg-amber-400 p-1 rounded-md font-black"
+          className="bg-[#61944a] p-1 m-1 rounded-md text-black font-bold"
           type="submit"
         />
       </form>
@@ -135,23 +140,23 @@ const SignUp = ({ setIsSignIn }) => {
 };
 
 const SignUpButton = ({ onClick }) => (
-  <div className="bg-amber-200 h-4/12 w-2/12 flex flex-col justify-center items-center">
-    <p>New here..</p>
-    <p>Create an account?</p>
+  <div className="bg-[#446834] h-30 md:h-4/12 w-60 md:w-2/12 flex flex-col justify-center items-center">
+    <p className="text-black">New here..</p>
+    <p className="text-black">Create an account?</p>
     <input
       type="button"
-      className="bg-amber-400 p-2 rounded-md font-black"
+      className="bg-[#61944a] p-1 m-1 rounded-md font-bold text-black"
       value="Register"
       onClick={onClick}
     />
   </div>
 );
 const SignInButton = ({ onClick }) => (
-  <div className="bg-amber-200 h-4/12 w-2/12 flex flex-col justify-center items-center">
-    <p>Welcome back!</p>
+  <div className="bg-[#61944a] h-30 md:h-4/12 w-60 md:w-2/12 flex flex-col justify-center items-center">
+    <p className="text-black">Welcome back!</p>
     <input
       type="button"
-      className="bg-amber-600 p-2 rounded-md font-black"
+      className="bg-[#446834] p-1 m-1 rounded-md font-bold text-black"
       value="Login"
       onClick={onClick}
     />
@@ -161,7 +166,7 @@ const UserAuthToggle = ({ onLogin }) => {
   const [isSignIn, setIsSignIn] = useState(true);
   return (
     <>
-      <div className="flex justify-center items-center h-screen  bg-green-800">
+      <div className="flex flex-col md:flex-row justify-center items-center h-screen  bg-[#81b56b]">
         {isSignIn ? (
           <>
             <SignIn />

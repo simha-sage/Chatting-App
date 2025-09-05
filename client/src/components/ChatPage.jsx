@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
-import { useApp } from "../context/conext1";
+import { useApp } from "../context/context1";
 import { useLocation } from "react-router-dom";
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -93,16 +93,16 @@ const ChatPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen border w-5/12 m-auto">
+    <div className="flex flex-col h-screen border min-w-78 max-w-120 m-auto">
       <div className="flex gap-4 p-4 bg-gray-200 items-center">
-        <div className="bg-amber-500 w-12 h-12 border rounded-full"></div>
+        <div className="bg-[#334e27] w-12 h-12 border rounded-full"></div>
         <div>
-          <p className="font-bold">{name}</p>
-          <p className="text-sm text-gray-500">{friendId}</p>
+          <p className="font-bold text-black">{name}</p>
+          <p className="text-sm text-green-500">online</p>
         </div>
       </div>
 
-      <div className="flex-1 border overflow-y-auto p-4 bg-amber-300 flex flex-col-reverse">
+      <div className="flex-1 border overflow-y-auto p-4 bg-[#376d41] flex flex-col-reverse">
         {messages.map((msg, index) => (
           <div
             key={index}
@@ -111,9 +111,9 @@ const ChatPage = () => {
             <p
               className={`px-4 py-2 ${
                 msg.sender === userId
-                  ? "bg-black text-white"
-                  : "bg-white text-black"
-              } rounded-lg my-1`}
+                  ? "bg-[#1f2f18] text-white"
+                  : "bg-white text-[#1f2f18]"
+              } rounded-lg my-0.5`}
             >
               {msg.text}
             </p>
@@ -126,7 +126,7 @@ const ChatPage = () => {
         <input
           type="text"
           name="message"
-          className="flex-1 border px-4 py-2 rounded-md"
+          className="flex-1 border px-4 py-2 rounded-md bg-[#334e27]"
           placeholder="Type a message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -134,7 +134,7 @@ const ChatPage = () => {
         <input
           type="button"
           value="Send"
-          className="bg-amber-400 px-4 py-2 rounded-md font-black"
+          className="bg-[#334e27] px-4 py-2 rounded-md font-black"
           onClick={sendMessage}
         />
       </div>
