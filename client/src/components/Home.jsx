@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../context/context1";
 import { useState, useEffect, use } from "react";
+import FriendCard from "./FriendCard";
+import SuggestionCard from "./SuggestionCard";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
