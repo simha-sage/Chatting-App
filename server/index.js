@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { type } from "node:os";
+import bcrypt from "bcrypt";
 
 const app = express();
 app.use(cookieParser());
@@ -15,10 +15,7 @@ dotenv.config();
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173", // Vite default dev URL
-      "https://chatting-app-client-8bru.onrender.com",
-    ],
+    origin: [process.env.CLIENT_URL],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
@@ -38,16 +35,20 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, maxlength: 100 },
   password: { type: String, required: true, maxlength: 100, minlength: 6 },
   name: { type: String },
-  friends: { type: [{ id: String, name: String }], default: [], unique: true },
+  friends: {
+    type: [{ _id: mongoose.Schema.Types.ObjectId, name: String }],
+    default: [],
+  },
 });
 const User = mongoose.model("users", userSchema);
 // api routes
 app.post("/userSignUp", async (req, res) => {
   try {
     const { email, password, userName } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       email,
-      password,
+      password: hashedPassword,
       name: userName,
       friends: [],
     });
@@ -66,8 +67,10 @@ app.post("/userSignUp", async (req, res) => {
 app.post("/userSignIn", async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  if (!user || user.password !== password) {
-    return res.send({ message: "Unsucessful" });
+
+  const validPassword = await bcrypt.compare(password, user.password);
+  if (!validPassword) {
+    return res.status(401).json({ message: "Unsuccessful" });
   }
 
   const token = jwt.sign(
@@ -80,8 +83,8 @@ app.post("/userSignIn", async (req, res) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true, // must be false on localhost
-    sameSite: "none", // or "none" + secure:true if cross-origin POST
+    secure: process.env.NODE_ENV === "production", // true in prod, false in dev
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     maxAge: 3600000,
   });
   res.json({
@@ -120,8 +123,9 @@ app.get("/protectedRoute", authMiddleware, (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false, // true in production
-    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    path: "/",
   });
   res.json({ message: "Logged out" });
 });
@@ -162,7 +166,7 @@ app.get("/friends", authMiddleware, async (req, res) => {
   const userId = req.userId;
   try {
     const user = await User.findById(userId);
-    res.json(user.friends);
+    res.json(user.friends || []);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -176,7 +180,7 @@ app.get("/friends", authMiddleware, async (req, res) => {
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://chatting-app-client-8bru.onrender.com",
+    origin: process.env.CLIENT_URL,
     methods: ["GET", "POST"],
     credentials: true,
   },

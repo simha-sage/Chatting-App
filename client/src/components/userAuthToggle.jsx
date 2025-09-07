@@ -15,15 +15,10 @@ const SignIn = () => {
         body: JSON.stringify({ email, password }),
         credentials: "include",
       });
-      fetch(`${apiUrl}/health`, { credentials: "include" })
-        .then((res) => res.json())
-        .then(console.log);
-
       const data = await response.json();
       if (data.message == "Login successful") {
         setUser(data.userName);
         setUserId(data.userId);
-        console.log(data.userId, "aaple");
         setEmail("");
         setPassword("");
         navigate("/");

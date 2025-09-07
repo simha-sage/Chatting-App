@@ -35,7 +35,6 @@ export const AppProvider = ({ children }) => {
         setUserId(data.userId);
         navigate("/"); // restore user from cookie
       } catch (error) {
-        console.error("Session check failed:", error);
         navigate("/authentication");
       }
     };
@@ -66,14 +65,16 @@ export const AppProvider = ({ children }) => {
   }, [user]);
   useEffect(() => {
     const getSuggestions = async function () {
-      const response = await fetch(`${apiUrl}/friendSuggestions`, {
-        method: "GET",
-        credentials: "include", // 🔑 send cookies
-      });
-      const data = await response.json();
-      setFriendSuggestions(data);
-      console.log(data);
-      console.log(user);
+      try {
+        const response = await fetch(`${apiUrl}/friendSuggestions`, {
+          method: "GET",
+          credentials: "include", // 🔑 send cookies
+        });
+        const data = await response.json();
+        setFriendSuggestions(data);
+        console.log(data);
+        console.log(user);
+      } catch (err) {}
     };
     getSuggestions();
   }, []);

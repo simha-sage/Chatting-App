@@ -3,7 +3,7 @@ const FriendCard = ({ data }) => {
   const navigate = useNavigate();
   return (
     <div
-      className="border p-3 m-1 rounded-lg shadow-lg flex w-89 min-w-78 justify-between items-center"
+      className="border p-3 m-1 rounded-lg shadow-lg flex w-96 justify-between items-center"
       onClick={() =>
         navigate(`/chatPage/?friendId=${data._id}&name=${data.name}`)
       }

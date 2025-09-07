@@ -1,4 +1,5 @@
 const apiUrl = import.meta.env.VITE_API_URL;
+import { useApp } from "../context/context1";
 const SuggestionCard = ({ data }) => {
   const { friends, setFriends, setFriendSuggestions, friendSuggestions } =
     useApp();
@@ -26,32 +27,30 @@ const SuggestionCard = ({ data }) => {
   }
 
   return (
-    <div className="border p-3 m-1 rounded-lg shadow-lg flex min-w-78 justify-between items-center">
-      <div className="border rounded-4xl h-13 w-13 bg-amber-500 flex justify-center items-center">
-        {/* optional icon or text here */}
+    <div className="border p-3 m-1 rounded-lg shadow-lg flex w-96 justify-between items-center">
+      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-amber-500">
+        {/* optional icon or initials */}
       </div>
+
       <div className="ml-4 flex-1">
-        <p>{data.name}</p>
-        <p>{data.email}</p>
+        <p className="font-semibold">{data.name}</p>
+        <p className="text-sm text-gray-600">{data.email}</p>
       </div>
-      <div>
-        <input
-          className="px-4 py-2 bg-amber-400 rounded"
-          type="button"
-          value="ADD"
-          onClick={async () => {
-            const response = await addFriend(data);
-            if (response?.success) {
-              setFriends([data, ...friends]);
-              setFriendSuggestions(
-                friendSuggestions.filter((i) => i._id !== data._id)
-              );
-            } else {
-              console.error("Failed to add friend:", response);
-            }
-          }}
-        />
-      </div>
+
+      <input
+        type="button"
+        value="ADD"
+        className="w-20 h-10 bg-amber-400 rounded text-center font-medium hover:bg-amber-500 cursor-pointer"
+        onClick={async () => {
+          const response = await addFriend(data);
+          if (response?.success) {
+            setFriends([data, ...friends]);
+            setFriendSuggestions(
+              friendSuggestions.filter((i) => i._id !== data._id)
+            );
+          }
+        }}
+      />
     </div>
   );
 };

@@ -7,7 +7,6 @@ const DashBoard = () => {
     <div>
       <Navbar />
       <Outlet />
-      <Footer />
     </div>
   );
 };
