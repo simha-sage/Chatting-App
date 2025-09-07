@@ -133,6 +133,9 @@ app.post("/logout", (req, res) => {
 //get friend suggestions
 app.get("/friendSuggestions", authMiddleware, async (req, res) => {
   const userFriends = await User.findById(req.userId).select("friends");
+  if (!userFriends) {
+    return res.status(404).json({ message: "User not found" });
+  }
   const friendsIds = userFriends.friends.map((friend) => friend._id);
   const suggestions = await User.find({
     _id: { $nin: [...friendsIds, req.userId] }, // exclude logged in user
@@ -166,7 +169,15 @@ app.get("/friends", authMiddleware, async (req, res) => {
   const userId = req.userId;
   try {
     const user = await User.findById(userId);
-    res.json(user.friends || []);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    } else {
+      if (!user.friends) {
+        return res.json([]);
+      } else {
+        return res.json(user.friends);
+      }
+    }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

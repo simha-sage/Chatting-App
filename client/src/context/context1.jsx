@@ -43,41 +43,28 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    user == "" ? navigate("/authentication") : navigate("/");
-    if (user !== "") {
-      async function fetchFriends() {
-        try {
-          const res = await fetch(`${apiUrl}/friends`, {
-            method: "GET",
-            credentials: "include", // 🔑 send cookies
-          });
-          const data = await res.json();
+    if (!user) return;
 
-          setFriends(data);
-          console.log("Friends:", data);
-          return data;
-        } catch (err) {
-          console.error("Error fetching friends:", err);
-        }
-      }
-      fetchFriends();
-    }
-  }, [user]);
-  useEffect(() => {
-    const getSuggestions = async function () {
+    const fetchFriendsAndSuggestions = async () => {
       try {
-        const response = await fetch(`${apiUrl}/friendSuggestions`, {
-          method: "GET",
-          credentials: "include", // 🔑 send cookies
-        });
-        const data = await response.json();
-        setFriendSuggestions(data);
-        console.log(data);
-        console.log(user);
-      } catch (err) {}
+        const [friendsRes, suggestionsRes] = await Promise.all([
+          fetch(`${apiUrl}/friends`, { credentials: "include" }),
+          fetch(`${apiUrl}/friendSuggestions`, { credentials: "include" }),
+        ]);
+
+        const friendsData = await friendsRes.json();
+        const suggestionsData = await suggestionsRes.json();
+
+        setFriends(friendsData);
+        setFriendSuggestions(suggestionsData);
+      } catch (err) {
+        console.error("Error fetching friends or suggestions:", err);
+      }
     };
-    getSuggestions();
-  }, []);
+
+    fetchFriendsAndSuggestions();
+  }, [user]);
+
   return (
     <AppContext.Provider
       value={{

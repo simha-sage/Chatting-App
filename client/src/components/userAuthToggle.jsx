@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useApp } from "../context/context1";
 import { useNavigate } from "react-router-dom";
+import PasswordInput from "../UI_components/PasswordInput";
 const apiUrl = import.meta.env.VITE_API_URL;
 const SignIn = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="bg-[#61944a] h-4/12 w-60 md:w-4/12 flex justify-center items-center">
+    <div className="bg-[#446834] h-4/12 w-60 md:w-4/12 flex justify-center items-center">
       <form
         className="flex flex-col items-center"
         id="signIn"
@@ -47,19 +48,15 @@ const SignIn = () => {
           value={email}
           required
           onChange={(e) => setEmail(e.target.value)}
-          className="border-2 border-grey-500 rounded p-1 px-1 my-1 text-black"
+          className="border-2  rounded p-1 px-1 my-1 text-black"
         />
-        <input
-          type="password"
-          placeholder="password"
-          required
-          minLength="6"
+
+        <PasswordInput
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border-2 border-grey-500 rounded p-1 px-1 my-1 text-black"
         />
         <input
-          className="bg-[#446834] p-1 m-1 rounded-md font-bold text-black"
+          className="bg-[#61944a] p-1 m-1 rounded-md font-bold text-black"
           type="submit"
         />
       </form>
@@ -115,15 +112,9 @@ const SignUp = ({ setIsSignIn }) => {
           onChange={(e) => setUserName(e.target.value)}
           className="border-2 border-grey-500 rounded p-1 px-1 my-1 text-black "
         />
-        <input
-          type="password"
-          placeholder="password"
+        <PasswordInput
           value={password}
-          required
-          minLength={6}
-          maxLength={30}
           onChange={(e) => setPassword(e.target.value)}
-          className="border-2 border-grey-500 rounded p-1 px-1 my-1 text-black"
         />
         <input
           className="bg-[#61944a] p-1 m-1 rounded-md text-black font-bold"
@@ -135,12 +126,12 @@ const SignUp = ({ setIsSignIn }) => {
 };
 
 const SignUpButton = ({ onClick }) => (
-  <div className="bg-[#446834] h-30 md:h-4/12 w-60 md:w-2/12 flex flex-col justify-center items-center">
+  <div className="bg-[#61944a] h-30 md:h-4/12 w-60 md:w-2/12 flex flex-col justify-center items-center">
     <p className="text-black">New here..</p>
     <p className="text-black">Create an account?</p>
     <input
       type="button"
-      className="bg-[#61944a] p-1 m-1 rounded-md font-bold text-black"
+      className="bg-[#446834] p-1 m-1 rounded-md font-bold text-black"
       value="Register"
       onClick={onClick}
     />

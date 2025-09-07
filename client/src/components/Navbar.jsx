@@ -14,6 +14,7 @@ const Navbar = () => {
       method: "POST",
       credentials: "include",
     });
+    navigate("/authentication");
   };
   return (
     <div className="navbar bg-base-100 shadow-sm">
